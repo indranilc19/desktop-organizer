@@ -1,0 +1,7 @@
+data/
+*.exe
+settings.json
+sources.json
+tools/*.log
+tools/drive-letters.json
+tools/usb-report.txt

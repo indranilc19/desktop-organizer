@@ -1,0 +1,134 @@
+{
+ "_help": "Folders the launcher indexes. depth = sub-folder levels scanned for files; dirLevels = folder levels listed as results; exts = file types (empty = all); mode: calibre (book covers), pinned (apps shelf). Copy entries from _examples into sources for your own drives. Press F5 after editing.",
+ "sources": [
+  {
+   "root": "%ProgramData%\\Microsoft\\Windows\\Start Menu\\Programs",
+   "cat": "Apps",
+   "mode": "apps",
+   "depth": 3,
+   "exts": [
+    ".lnk",
+    ".url"
+   ],
+   "exclude": [
+    "uninstall",
+    "readme",
+    "help",
+    "website",
+    "release notes",
+    "documentation",
+    "license",
+    "administrative tools",
+    "windows tools",
+    "system tools",
+    "maintenance"
+   ]
+  },
+  {
+   "root": "%AppData%\\Microsoft\\Windows\\Start Menu\\Programs",
+   "cat": "Apps",
+   "mode": "apps",
+   "depth": 3,
+   "exts": [
+    ".lnk",
+    ".url"
+   ],
+   "exclude": [
+    "uninstall",
+    "readme",
+    "help",
+    "website",
+    "release notes",
+    "documentation",
+    "license",
+    "administrative tools",
+    "windows tools",
+    "system tools",
+    "maintenance"
+   ]
+  },
+  {
+   "root": "%USERPROFILE%\\Desktop",
+   "cat": "Desktop",
+   "depth": 1,
+   "dirLevels": 1
+  },
+  {
+   "root": "%USERPROFILE%\\Downloads",
+   "cat": "Downloads",
+   "depth": 1,
+   "dirLevels": 1
+  },
+  {
+   "root": "%USERPROFILE%\\Documents",
+   "cat": "Docs",
+   "depth": 2,
+   "dirLevels": 1,
+   "exts": [
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+    ".ppt",
+    ".pptx",
+    ".txt",
+    ".md"
+   ],
+   "exclude": [
+    "rainmeter",
+    "my games"
+   ]
+  },
+  {
+   "root": "%USERPROFILE%\\Pictures",
+   "cat": "Photos",
+   "depth": 0,
+   "dirLevels": 2
+  },
+  {
+   "root": "%USERPROFILE%\\Videos",
+   "cat": "Movies",
+   "depth": 3,
+   "dirLevels": 1
+  }
+ ],
+ "_examples": [
+  {
+   "root": "E:\\Media",
+   "cat": "Movies",
+   "depth": 3,
+   "dirLevels": 1
+  },
+  {
+   "root": "E:\\Library\\Books",
+   "cat": "Books",
+   "mode": "calibre",
+   "depth": 3,
+   "exts": [
+    ".epub",
+    ".pdf",
+    ".mobi",
+    ".azw3"
+   ]
+  },
+  {
+   "root": "E:\\Library\\Manga",
+   "cat": "Manga",
+   "depth": 3,
+   "dirLevels": 1
+  },
+  {
+   "root": "E:\\Library\\Comics",
+   "cat": "Comics",
+   "depth": 2,
+   "dirLevels": 1
+  },
+  {
+   "root": "E:\\Library\\Magazines",
+   "cat": "Magazines",
+   "depth": 3,
+   "dirLevels": 1
+  }
+ ]
+}

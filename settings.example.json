@@ -1,0 +1,22 @@
+{
+ "_help": "Personal settings. Paths may use %USERPROFILE% and other environment variables. Press F5 or restart after editing.",
+ "appName": "Desktop Organizer",
+ "userName": "",
+ "buttons": [
+  {
+   "label": "Documents",
+   "path": "%USERPROFILE%\\Documents"
+  },
+  {
+   "label": "Pictures",
+   "path": "%USERPROFILE%\\Pictures"
+  }
+ ],
+ "backgroundFolders": [
+  "%USERPROFILE%\\Pictures"
+ ],
+ "ignoreFolders": [],
+ "driveLetterHint": "",
+ "mediaDrive": "",
+ "libraryDrive": ""
+}

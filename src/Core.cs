@@ -765,6 +765,11 @@ namespace DesktopOrganizer
         static readonly Queue<Action> staQueue = new Queue<Action>();
         static readonly AutoResetEvent staSignal = new AutoResetEvent(false);
         static readonly Dictionary<string, ImageSource> cache = new Dictionary<string, ImageSource>(StringComparer.OrdinalIgnoreCase);
+        // thumbnails load on a few threads of their own: a shelf of covers on a sleeping USB drive must not
+        // tie up the thread pool the index rebuild and the inbox check run on
+        const int Workers = 3;
+        static readonly Queue<Action> work = new Queue<Action>();
+        static readonly SemaphoreSlim workReady = new SemaphoreSlim(0);
         static readonly string[] Img = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tif", ".tiff" };
 
         public static void Init(Dispatcher d)
@@ -774,6 +779,29 @@ namespace DesktopOrganizer
             sta.IsBackground = true;
             sta.SetApartmentState(ApartmentState.STA);
             sta.Start();
+            for (int i = 0; i < Workers; i++)
+            {
+                var t = new Thread(WorkLoop);
+                t.IsBackground = true; t.Priority = ThreadPriority.BelowNormal;
+                t.Start();
+            }
+        }
+
+        static void WorkLoop()
+        {
+            while (true)
+            {
+                workReady.Wait();
+                Action a;
+                lock (work) a = work.Dequeue();
+                try { a(); } catch { }
+            }
+        }
+
+        static void Queue(Action a)
+        {
+            lock (work) work.Enqueue(a);
+            workReady.Release();
         }
 
         static void StaLoop()
@@ -804,7 +832,7 @@ namespace DesktopOrganizer
         {
             string key = it.Path + "|" + size;
             lock (cache) { ImageSource c; if (cache.TryGetValue(key, out c)) { done(c); return; } }
-            ThreadPool.QueueUserWorkItem(delegate
+            Queue(delegate
             {
                 ImageSource img = null;
                 try

@@ -362,7 +362,7 @@ namespace DesktopOrganizer
             indexTimer = new DispatcherTimer(); indexTimer.Interval = TimeSpan.FromMilliseconds(500);
             indexTimer.Tick += delegate
             {
-                if (Engine.Fresh) { Engine.Fresh = false; BuildShelves(); Refresh(); }
+                if (Engine.Fresh) { Engine.Fresh = false; if (shelvesAt != DateTime.MinValue && ShelvesStale()) BuildShelves(); Refresh(); }
                 UpdateStatus();
             };
             indexTimer.Start();
@@ -394,7 +394,6 @@ namespace DesktopOrganizer
             HotkeyText.Text = hotkey.Label.Length > 0 ? hotkey.Label + " opens " + Settings.AppName + " from anywhere" : "";
             SetupTray();
             EnsureStartup();
-            BuildShelves();
             LoadBackground();
             Log.Write("startup: window ready " + sw.ElapsedMilliseconds + " ms");
         }
@@ -452,7 +451,9 @@ namespace DesktopOrganizer
             win.BeginAnimation(Window.OpacityProperty, new DoubleAnimation(win.Opacity, 1, TimeSpan.FromMilliseconds(180)));
             Q.Focus(); Keyboard.Focus(Q); Q.SelectAll();
             UpdateClock();
-            if (Q.Text.Length == 0) BuildShelves();
+            // the window draws first; the shelves (a hundred-odd cards) fill in right after
+            if (Q.Text.Length == 0)
+                win.Dispatcher.BeginInvoke(new Action(delegate { if (ShelvesStale()) BuildShelves(); }), DispatcherPriority.Background);
         }
 
         public void Hide()
@@ -573,8 +574,28 @@ namespace DesktopOrganizer
         }
 
         // ---------------------------------------------------------- shelves (home)
+        DateTime shelvesAt = DateTime.MinValue;
+        long shelvesSig;
+
+        // what the shelves show, in one number: a re-index that found the same things leaves them alone
+        long ShelvesSignature()
+        {
+            long sig = Engine.Items.Count;
+            foreach (var it in Engine.Items)
+                sig = sig * 31 + ((it.Path ?? "").GetHashCode() ^ it.Modified.GetHashCode() ^ (it.Thumbnail == null ? 0 : 17));
+            return sig;
+        }
+
+        // never built, a different index, or long enough ago that "Jump back in" may have moved
+        bool ShelvesStale()
+        {
+            return shelvesAt == DateTime.MinValue || (DateTime.Now - shelvesAt).TotalMinutes >= 2 || ShelvesSignature() != shelvesSig;
+        }
+
         void BuildShelves()
         {
+            shelvesAt = DateTime.Now;
+            shelvesSig = ShelvesSignature();
             Shelves.Children.Clear();
             var items = Engine.Items;
             var recent = Engine.Recent(12);
